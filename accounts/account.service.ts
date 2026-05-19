@@ -188,10 +188,6 @@ async function hash(password: any) {
     return await bcrypt.hash(password, 10);
 }
 
-function generateJwtToken(account: any) {
-    return jwt.sign({ sub: account.id, id: account.id }, config.secret, { expiresIn: '15m' });
-}
-
 function generateRefreshToken(account: any, ipAddress: any) {
     return new db.RefreshToken({
         accountId: account.id,
@@ -254,4 +250,25 @@ async function sendPasswordResetEmail(account: any, origin: any) {
         subject: 'Sign-up Verification API - Reset Password',
         html: `<h4>Reset Password Email</h4>${message}`
     });
+}
+
+function getJwtSecret() {
+    // Safely fall back to config.json values if not in a production environment
+    const fileConfig = process.env.NODE_ENV === 'production' ? {} : config;
+
+    if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+        throw 'JWT_SECRET environment variable is required in production';
+    }
+
+    const secret = process.env.JWT_SECRET || (fileConfig as any).secret;
+    if (!secret) throw 'JWT secret is missing';
+    return secret;
+}
+
+function generateJwtToken(account: any) {
+    return jwt.sign(
+        { sub: account.id, id: account.id },
+        getJwtSecret(),
+        { expiresIn: '15m' }
+    );
 }
