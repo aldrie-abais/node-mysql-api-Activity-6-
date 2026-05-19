@@ -1,0 +1,10 @@
+# Cursor Rules
+
+## Code Generation
+
+- When asked to create a file for a particular step, write the code **purely based on the provided image/reference**. Do **not** add anything beyond what is shown — no extra imports, no additional logic, no "helpful" additions — unless explicitly given **permission** to do so.
+
+## Uncertainty & Confirmation
+
+- If there is **any doubt or uncertainty** about what to write, what a step requires, or what the image/reference shows, **always stop and ask for confirmation** before proceeding.
+- Never assume. Never guess. Ask first.

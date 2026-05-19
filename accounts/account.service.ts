@@ -27,15 +27,15 @@ export default {
 
 async function authenticate({ email, password, ipAddress }: any) {
     const account = await db.Account.scope('withHash').findOne({ where: { email } });
-    
+
     if (!account || !account.isVerified || !(await bcrypt.compare(password, account.passwordHash))) {
         throw 'Email or password is incorrect';
     }
-    
+
     const jwtToken = generateJwtToken(account);
     const refreshToken = generateRefreshToken(account, ipAddress);
     await refreshToken.save();
-    
+
     return {
         ...basicDetails(account),
         jwtToken,
@@ -46,7 +46,7 @@ async function authenticate({ email, password, ipAddress }: any) {
 async function refreshToken({ token, ipAddress }: any) {
     const refreshToken = await getRefreshToken(token);
     const account = await refreshToken.getAccount();
-    
+
     // Refresh Token Rotation
     const newRefreshToken = generateRefreshToken(account, ipAddress);
     refreshToken.revoked = Date.now();
@@ -54,9 +54,9 @@ async function refreshToken({ token, ipAddress }: any) {
     refreshToken.replacedByToken = newRefreshToken.token;
     await refreshToken.save();
     await newRefreshToken.save();
-    
+
     const jwtToken = generateJwtToken(account);
-    
+
     return {
         ...basicDetails(account),
         jwtToken,
@@ -77,13 +77,13 @@ async function register(params: any, origin: any) {
     if (await db.Account.findOne({ where: { email: params.email } })) {
         return await sendAlreadyRegisteredEmail(params.email, origin);
     }
-    
+
     const account = new db.Account(params);
     const isFirstAccount = (await db.Account.count()) === 0;
     account.role = isFirstAccount ? Role.Admin : Role.User;
     account.verificationToken = randomTokenString();
     account.passwordHash = await hash(params.password);
-    
+
     await account.save();
     await sendVerificationEmail(account, origin);
 }
@@ -91,7 +91,7 @@ async function register(params: any, origin: any) {
 async function verifyEmail({ token }: any) {
     const account = await db.Account.findOne({ where: { verificationToken: token } });
     if (!account) throw 'Verification failed';
-    
+
     account.verified = Date.now();
     account.verificationToken = null;
     await account.save();
@@ -102,7 +102,7 @@ async function verifyEmail({ token }: any) {
 async function forgotPassword({ email }: any, origin: any) {
     const account = await db.Account.findOne({ where: { email } });
     if (!account) return;
-    
+
     account.resetToken = randomTokenString();
     account.resetTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     await account.save();
