@@ -1,0 +1,19 @@
+{
+    "database": {
+        "database": "node_mysql_api",
+        "host": "YOUR_TIDB_HOST",
+        "port": 4000,
+        "user": "YOUR_TIDB_USER",
+        "password": "YOUR_TIDB_PASSWORD"
+    },
+    "secret": "SUPER_SECRET_KEY_REPLACE_ME_IN_PRODUCTION",
+    "emailFrom": "info@my-node-api.com",
+    "smtpOptions": {
+        "host": "smtp.ethereal.email",
+        "port": 587,
+        "auth": {
+            "user": "YOUR_ETHEREAL_USER",
+            "pass": "YOUR_ETHEREAL_PASSWORD"
+        }
+    }
+}

@@ -6,6 +6,7 @@ import refreshTokenModel from '../accounts/refresh-token.model';
 
 const db: any = {};
 
+
 // Helper function to safely load config and fix initialization order
 function getDatabaseConfig() {
     const fileConfig = process.env.NODE_ENV === 'production' ? {} : config;
@@ -33,13 +34,23 @@ async function initialize() {
         await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
     }
 
-    // Connect to the db with optional SSL support for cloud deployment
-    const sequelize = new Sequelize(database, user, password, {
+
+const sequelize = new Sequelize(
+    database, 
+    user, 
+    password, 
+    {
+        host: host,
+        port: port, 
         dialect: 'mysql',
-        host,
-        port,
-        dialectOptions: ssl ? { ssl: { rejectUnauthorized: false } } : undefined
-    });
+        dialectOptions: {
+            ssl: {
+                minVersion: 'TLSv1.2',
+                rejectUnauthorized: true
+            }
+        }
+    }
+);
 
     // Initialize models and add them to the exported db object
     db.Account = accountModel(sequelize);

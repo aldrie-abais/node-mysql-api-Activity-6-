@@ -12,13 +12,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// allow cors requests from any origin and with credentials
 // CORS Configuration
 const corsOrigin = process.env.CORS_ORIGIN;
 app.use(cors({
     origin: process.env.NODE_ENV === 'production'
         ? (corsOrigin ? corsOrigin.split(',').map((x: string) => x.trim()) : false)
-        : (origin, callback) => callback(null, true),
+        : 'http://localhost:4200', // Explicitly allows your Angular app in development
     credentials: true
 }));
 
