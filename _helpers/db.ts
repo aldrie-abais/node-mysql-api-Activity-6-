@@ -9,7 +9,7 @@ const db: any = {};
 
 // Helper function to safely load config and fix initialization order
 function getDatabaseConfig() {
-    const fileConfig = process.env.NODE_ENV === 'production' ? {} : config;
+    const fileConfig = config;
     const databaseConfig = (fileConfig as any).database || {};
 
     return {
