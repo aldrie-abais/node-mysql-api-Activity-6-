@@ -14,12 +14,12 @@ app.use(cookieParser());
 
 // CORS Configuration
 const corsOrigin = process.env.CORS_ORIGIN;
-app.use(cors({
-    origin: process.env.NODE_ENV === 'production'
-        ? (corsOrigin ? corsOrigin.split(',').map((x: string) => x.trim()) : false)
-        : 'http://localhost:4200', // Explicitly allows your Angular app in development
-    credentials: true
-}));
+// app.use(cors({
+//     origin: process.env.NODE_ENV === 'production'
+//         ? (corsOrigin ? corsOrigin.split(',').map((x: string) => x.trim()) : false)
+//         : 'http://localhost:4200', // Explicitly allows your Angular app in development
+//     credentials: true
+// }));
 
 app.use(cors({
     origin: (origin, callback) => {
