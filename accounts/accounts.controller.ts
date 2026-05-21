@@ -160,9 +160,10 @@ function getAll(req: any, res: any, next: any) {
 }
 
 function getById(req: any, res: any, next: any) {
-    if (Number(req.params.id) !== req.user.id && req.user.role !== Role.Admin) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
+    // Safely convert both sides to Strings before comparing
+if (String(req.params.id) !== String(req.user.id) && req.user.role !== Role.Admin) {
+    return res.status(401).json({ message: 'Unauthorized' });
+}
 
     accountService.getById(req.params.id)
         .then((account: any) => account ? res.json(account) : res.sendStatus(404))
@@ -207,9 +208,10 @@ function updateSchema(req: any, res: any, next: any) {
 }
 
 function update(req: any, res: any, next: any) {
-    if (Number(req.params.id) !== req.user.id && req.user.role !== Role.Admin) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
+ // Safely convert both sides to Strings before comparing
+if (String(req.params.id) !== String(req.user.id) && req.user.role !== Role.Admin) {
+    return res.status(401).json({ message: 'Unauthorized' });
+}
 
     accountService.update(req.params.id, req.body)
         .then((account: any) => res.json(account))
@@ -217,9 +219,10 @@ function update(req: any, res: any, next: any) {
 }
 
 function _delete(req: any, res: any, next: any) {
-    if (Number(req.params.id) !== req.user.id && req.user.role !== Role.Admin) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
+// Safely convert both sides to Strings before comparing
+if (String(req.params.id) !== String(req.user.id) && req.user.role !== Role.Admin) {
+    return res.status(401).json({ message: 'Unauthorized' });
+}
 
     accountService.delete(req.params.id)
         .then(() => res.json({ message: 'Account deleted successfully' }))
