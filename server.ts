@@ -21,6 +21,18 @@ app.use(cors({
     credentials: true
 }));
 
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow the request if it's your Vercel app
+        if (!origin || origin.startsWith('https://abais-lab7-activity-angular.vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+}));
+
 // api routes
 app.use('/accounts', accountsController);
 
