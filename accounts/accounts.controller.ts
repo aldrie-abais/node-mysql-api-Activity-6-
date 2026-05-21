@@ -209,6 +209,7 @@ function updateSchema(req: any, res: any, next: any) {
 
 function update(req: any, res: any, next: any) {
  // Safely convert both sides to Strings before comparing
+ console.log("SERVER ID CHECK:", { paramsId: req.params.id, userId: req.user?.id, role: req.user?.role });
 if (String(req.params.id) !== String(req.user.id) && req.user.role !== Role.Admin) {
     return res.status(401).json({ message: 'Unauthorized' });
 }
