@@ -9,6 +9,7 @@ export default function errorHandler(err: any, req: Request, res: Response, next
             return res.status(statusCode).json({ message: err });
         case err.name === 'UnauthorizedError':
             // jwt authentication error
+            console.error('JWT Authentication Error:', err.message, err.inner);
             return res.status(401).json({ message: 'Unauthorized' });
         default:
             // default to 500 server error
