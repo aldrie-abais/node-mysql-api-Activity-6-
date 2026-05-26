@@ -92,7 +92,8 @@ async function register(params: any, origin: any) {
     const emailSent = await sendVerificationEmail(account, origin);
     
     if (!emailSent) {
-        return 'Account created successfully. (Free Tier Notice: Resend blocked the outgoing email. Instructor, please check the Render Server Logs to copy your verification link).';
+        let verifyUrl = `${origin || process.env.FRONTEND_URL || 'http://localhost:4200'}/account/verify-email?token=${account.verificationToken}`;
+        return `Account created successfully. (Free Tier Notice: Email delivery blocked. Instructor, please use this link to verify: ${verifyUrl} )`;
     }
     return 'Registration successful, please check your email for verification instructions';
 }
@@ -123,7 +124,8 @@ async function forgotPassword({ email }: any, origin: any) {
     const emailSent = await sendPasswordResetEmail(account, origin);
 
     if (!emailSent) {
-        return 'Password reset requested. (Free Tier Notice: Resend blocked the outgoing email. Instructor, please check the Render Server Logs to copy your reset link).';
+        let resetUrl = `${origin || process.env.FRONTEND_URL || 'http://localhost:4200'}/account/reset-password?token=${account.resetToken}`;
+        return `Password reset requested. (Free Tier Notice: Email delivery blocked. Instructor, please use this link to reset: ${resetUrl} )`;
     }
     return 'Please check your email for password reset instructions';
 }
