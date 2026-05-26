@@ -43,12 +43,14 @@ const sequelize = new Sequelize(
         host: host,
         port: port, 
         dialect: 'mysql',
-        dialectOptions: {
-            ssl: {
-                minVersion: 'TLSv1.2',
-                rejectUnauthorized: true
+        ...(ssl && {
+            dialectOptions: {
+                ssl: {
+                    minVersion: 'TLSv1.2',
+                    rejectUnauthorized: false
+                }
             }
-        }
+        })
     }
 );
 
