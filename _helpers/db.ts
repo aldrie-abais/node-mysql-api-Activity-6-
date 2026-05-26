@@ -63,7 +63,7 @@ const sequelize = new Sequelize(
     db.RefreshToken.belongsTo(db.Account);
 
     // Sync all models with database
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
 }
 
 export default db;
