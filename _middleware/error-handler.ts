@@ -14,6 +14,7 @@ export default function errorHandler(err: any, req: Request, res: Response, next
             return res.status(401).json({ message: 'Unauthorized' });
         default:
             // default to 500 server error
+            console.error('[Unhandled Server Error]:', err);
             return res.status(500).json({ message: err.message });
     }
 }

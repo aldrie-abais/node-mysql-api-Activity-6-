@@ -75,9 +75,11 @@ async function revokeToken({ token, ipAddress }: any) {
 
 async function register(params: any, origin: any) {
     if (await db.Account.findOne({ where: { email: params.email } })) {
+        console.log(`Registration: Email ${params.email} already exists. Sending 'already registered' email.`);
         return await sendAlreadyRegisteredEmail(params.email, origin);
     }
 
+    console.log(`Registration: Creating new account for ${params.email}...`);
     const account = new db.Account(params);
     const isFirstAccount = (await db.Account.count()) === 0;
     account.role = isFirstAccount ? Role.Admin : Role.User;
@@ -85,6 +87,8 @@ async function register(params: any, origin: any) {
     account.passwordHash = await hash(params.password);
 
     await account.save();
+    
+    console.log(`Registration: Account saved. Sending verification email to ${params.email}...`);
     await sendVerificationEmail(account, origin);
 }
 
