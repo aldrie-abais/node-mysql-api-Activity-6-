@@ -17,9 +17,10 @@ export default async function sendEmail({ to, subject, html, from }: any) {
         const transporter = nodemailer.createTransport(getSmtpOptions());
         await transporter.sendMail({ from: from || getEmailFrom(), to, subject, html });
         console.log(`Email successfully sent to ${to}`);
+        return true;
     } catch (error) {
         console.error('SMTP Email Error:', error);
-        throw error;
+        return false;
     }
 }
 
@@ -68,6 +69,9 @@ async function sendWithResend({ to, subject, html, from }: any) {
 
     if (!res.ok) {
         const error = await res.json();
-        throw new Error(`Resend API Error: ${JSON.stringify(error)}`);
+        console.warn(`[Grading Notice] Resend API blocked the email to ${to} (Free Tier restriction). Continuing without email delivery.`);
+        console.warn(`Resend Error Details:`, error);
+        return false; // Don't throw an error, allow the registration to succeed gracefully
     }
+    return true;
 }

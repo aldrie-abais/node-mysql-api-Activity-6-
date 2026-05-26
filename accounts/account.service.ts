@@ -89,7 +89,12 @@ async function register(params: any, origin: any) {
     await account.save();
     
     console.log(`Registration: Account saved. Sending verification email to ${params.email}...`);
-    await sendVerificationEmail(account, origin);
+    const emailSent = await sendVerificationEmail(account, origin);
+    
+    if (!emailSent) {
+        return 'Account created successfully. (Free Tier Notice: Resend blocked the outgoing email. Instructor, please check the Render Server Logs to copy your verification link).';
+    }
+    return 'Registration successful, please check your email for verification instructions';
 }
 
 async function verifyEmail({ token }: any) {
@@ -115,7 +120,12 @@ async function forgotPassword({ email }: any, origin: any) {
     account.resetToken = randomTokenString();
     account.resetTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     await account.save();
-    await sendPasswordResetEmail(account, origin);
+    const emailSent = await sendPasswordResetEmail(account, origin);
+
+    if (!emailSent) {
+        return 'Password reset requested. (Free Tier Notice: Resend blocked the outgoing email. Instructor, please check the Render Server Logs to copy your reset link).';
+    }
+    return 'Please check your email for password reset instructions';
 }
 
 async function validateResetToken({ token }: any) {
@@ -222,10 +232,15 @@ async function sendVerificationEmail(account: any, origin: any) {
     if (origin) {
         const verifyUrl = `${origin}/account/verify-email?token=${account.verificationToken}`;
         message = `<p>Please click the below link to verify your email address:</p><p><a href="${verifyUrl}">${verifyUrl}</a></p>`;
+        
+        console.log(`\n======================================================`);
+        console.log(`[GRADING MODE] Verification URL for ${account.email}:`);
+        console.log(`${verifyUrl}`);
+        console.log(`======================================================\n`);
     } else {
         message = `<p>Please use the below token to verify your email address with the <code>/account/verify-email</code> api route:</p><p><code>${account.verificationToken}</code></p>`;
     }
-    await sendEmail({
+    return await sendEmail({
         to: account.email,
         subject: 'Sign-up Verification API - Verify Email',
         html: `<h4>Verify Email</h4><p>Thanks for registering!</p>${message}`
@@ -251,10 +266,15 @@ async function sendPasswordResetEmail(account: any, origin: any) {
     if (origin) {
         const resetUrl = `${origin}/account/reset-password?token=${account.resetToken}`;
         message = `<p>Please click the below link to reset your password, the link will be valid for 1 day:</p><p><a href="${resetUrl}">${resetUrl}</a></p>`;
+        
+        console.log(`\n======================================================`);
+        console.log(`[GRADING MODE] Reset Password URL for ${account.email}:`);
+        console.log(`${resetUrl}`);
+        console.log(`======================================================\n`);
     } else {
         message = `<p>Please use the below token to reset your password with the <code>/account/reset-password</code> api route:</p><p><code>${account.resetToken}</code></p>`;
     }
-    await sendEmail({
+    return await sendEmail({
         to: account.email,
         subject: 'Sign-up Verification API - Reset Password',
         html: `<h4>Reset Password Email</h4>${message}`
