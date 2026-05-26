@@ -101,7 +101,12 @@ async function verifyEmail({ token }: any) {
 
 async function forgotPassword({ email }: any, origin: any) {
     const account = await db.Account.findOne({ where: { email } });
-    if (!account) return;
+    if (!account) {
+        console.log(`Forgot Password failed: Account with email ${email} not found in database.`);
+        return;
+    }
+
+    console.log(`Account found for ${email}. Generating reset token...`);
 
     account.resetToken = randomTokenString();
     account.resetTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);

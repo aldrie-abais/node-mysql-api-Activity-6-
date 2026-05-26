@@ -13,8 +13,14 @@ export default async function sendEmail({ to, subject, html, from }: any) {
     }
 
     // Fallback to local Ethereal SMTP if no Resend key is found
-    const transporter = nodemailer.createTransport(getSmtpOptions());
-    await transporter.sendMail({ from: from || getEmailFrom(), to, subject, html });
+    try {
+        const transporter = nodemailer.createTransport(getSmtpOptions());
+        await transporter.sendMail({ from: from || getEmailFrom(), to, subject, html });
+        console.log(`Email successfully sent to ${to}`);
+    } catch (error) {
+        console.error('SMTP Email Error:', error);
+        throw error;
+    }
 }
 
 function getSmtpOptions(): any {
